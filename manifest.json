@@ -1,0 +1,48 @@
+{
+  "display_information": {
+    "name": "BoltPy Automation Template"
+  },
+  "outgoing_domains": [],
+  "settings": {
+    "org_deploy_enabled": true,
+    "socket_mode_enabled": true
+  },
+  "features": {
+    "bot_user": {
+      "display_name": "BoltPy Automation Template"
+    },
+    "app_home": {
+      "messages_tab_enabled": true
+    }
+  },
+  "oauth_config": {
+    "scopes": {
+      "bot": ["chat:write"]
+    }
+  },
+  "functions": {
+    "sample_function": {
+      "title": "Sample function",
+      "description": "Runs sample function",
+      "input_parameters": {
+        "user_id": {
+          "type": "slack#/types/user_id",
+          "title": "User",
+          "description": "Send this to who?",
+          "is_required": true,
+          "hint": "Select a user in the workspace",
+          "name": "user_id"
+        }
+      },
+      "output_parameters": {
+        "user_id": {
+          "type": "slack#/types/user_id",
+          "title": "User",
+          "description": "User to used the function",
+          "is_required": true,
+          "name": "user_id"
+        }
+      }
+    }
+  }
+}

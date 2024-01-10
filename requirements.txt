@@ -1,0 +1,4 @@
+slack-cli-hooks
+pytest
+flake8==7.0.0
+black==23.12.1
