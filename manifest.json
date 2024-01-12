@@ -1,23 +1,31 @@
 {
   "display_information": {
-    "name": "BoltPy Automation Template"
+    "name": "BoltPy Jira Functions"
   },
   "outgoing_domains": [],
   "settings": {
     "org_deploy_enabled": true,
-    "socket_mode_enabled": true
+    "socket_mode_enabled": true,
+    "event_subscriptions": {
+      "bot_events": [
+        "app_home_opened"
+      ]
+    }
   },
   "features": {
     "bot_user": {
-      "display_name": "BoltPy Automation Template"
+      "display_name": "BoltPy Jira Functions"
     },
     "app_home": {
-      "messages_tab_enabled": true
+      "messages_tab_enabled": false,
+      "home_tab_enabled": true
     }
   },
   "oauth_config": {
     "scopes": {
-      "bot": ["chat:write"]
+      "bot": [
+        "chat:write"
+      ]
     }
   },
   "functions": {
