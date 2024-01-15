@@ -15,17 +15,17 @@ class Singleton(type):
         return cls._instances[cls]
 
 
-class State(metaclass=Singleton):
+class PersonalAccessTokenTable(metaclass=Singleton):
     _users: Dict[str, str] = {}
 
-    def create_user(self, username: str) -> None:
-        self._users[username] = None
+    def create_user(self, user_id: str, personal_access_token: str) -> None:
+        self._users[user_id] = personal_access_token
 
-    def update_user(self, username: str) -> None:
-        self._users[username] = None
+    def read_user(self, user_id: str) -> str:
+        return self._users[user_id]
 
-    def read_user(self, username: str) -> str:
-        return self._users[username]
+    def delete_user(self, user_id: str) -> None:
+        self._users.pop(user_id, None)
 
-    def delete_user(self, username: str) -> None:
-        self._users.pop(username)
+    def __contains__(self, user_id: str) -> bool:
+        return user_id in self._users
