@@ -20,5 +20,6 @@ def submit_pat_callback(ack: Ack, client: WebClient, body: dict, logger: Logger)
             user_id=user_id,
             personal_access_token=body["view"]["state"]["values"]["user_jira_pat_input"]["user_jira_pat"]["value"],
         )
+
     except Exception as e:
         logger.error(e)
