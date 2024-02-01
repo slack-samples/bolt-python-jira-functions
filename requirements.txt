@@ -1,4 +1,4 @@
 slack-cli-hooks
 pytest
 flake8==7.0.0
-black==23.12.1
+black==24.1.1
