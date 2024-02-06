@@ -49,6 +49,7 @@ def create_issue_callback(ack: Ack, inputs: dict, fail: Fail, complete: Complete
 
         response = requests.post(url, data=payload, headers=headers)
 
+        response.raise_for_status()
         jason_data = json.loads(response.text)
         complete(outputs={"issue_url": jason_data["self"]})
     except Exception as e:
