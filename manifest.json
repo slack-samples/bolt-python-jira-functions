@@ -1,4 +1,7 @@
 {
+  "_metadata": {
+    "major_version": 2
+  },
   "display_information": {
     "name": "BoltPy Jira Functions"
   },
@@ -33,47 +36,125 @@
       "title": "Create an issue",
       "description": "Create a JIRA Cloud issue",
       "input_parameters": {
-        "user_id": {
-          "type": "slack#/types/user_id",
-          "title": "User",
-          "description": "Send this to who?",
-          "is_required": true,
-          "hint": "Select a user in the workspace",
-          "name": "user_id"
-        },
-        "project": {
-          "type": "string",
-          "title": "Project",
-          "description": "Project",
-          "is_required": true
-        },
-        "issuetype": {
-          "type": "string",
-          "title": "Issue type",
-          "description": "Type of issue to create: Bug, Improvement, New Feature, or Epic.",
-          "is_required": true
-        },
-        "summary": {
-          "type": "string",
-          "title": "Summary",
-          "description": "Summary of the bug or issue...",
-          "is_required": true
-        },
-        "description": {
-          "type": "string",
-          "title": "Description",
-          "description": "Description of the bug or issue...",
-          "is_required": true
+        "properties": {
+          "user_id": {
+            "type": "slack#/types/user_id",
+            "title": "Represents a user who interacted with a workflow at runtime.",
+            "description": "Send this to who?",
+            "is_required": true,
+            "hint": "Select a user in the workspace"
+          },
+          "project": {
+            "type": "string",
+            "title": "Project",
+            "description": "Project",
+            "is_required": true
+          },
+          "issuetype": {
+            "type": "string",
+            "title": "Issue type",
+            "description": "Type of issue to create: Bug, Improvement, New Feature, or Epic.",
+            "is_required": true
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary",
+            "description": "Summary of the bug or issue...",
+            "is_required": true
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "Description of the bug or issue...",
+            "is_required": true
+          }
         }
       },
       "output_parameters": {
-        "issue_url": {
-          "type": "string",
-          "title": "Issue url",
-          "description": "Url of the issue that was created",
-          "is_required": true
+        "properties": {
+          "issue_url": {
+            "type": "string",
+            "title": "Issue url",
+            "description": "Url of the issue that was created",
+            "is_required": true
+          }
         }
       }
+    }
+  },
+  "workflows": {
+    "create_jira_issue": {
+      "title": "Create a Jira issue",
+      "description": "Create a Jira issue in dev",
+      "input_parameters": {
+        "properties": {
+          "interactivity": {
+            "type": "slack#/types/interactivity"
+          }
+        },
+        "required": [
+          "interactivity"
+        ]
+      },
+      "steps": [
+        {
+          "id": "0",
+          "function_id": "slack#/functions/open_form",
+          "inputs": {
+            "title": "Create a Jira Issue",
+            "interactivity": "{{inputs.interactivity}}",
+            "submit_label": "submit",
+            "fields": {
+              "elements": [
+                {
+                  "name": "project",
+                  "title": "Project",
+                  "type": "string"
+                },
+                {
+                  "name": "issuetype",
+                  "title": "Issue type",
+                  "type": "string",
+                  "default": "Bug"
+                },
+                {
+                  "name": "description",
+                  "title": "Description",
+                  "hint": "Description of the bug or issue...",
+                  "type": "string",
+                  "long": true
+                },
+                {
+                  "name": "summary",
+                  "title": "Summary",
+                  "hint": "Summary of the bug or issue...",
+                  "type": "string"
+                }
+              ],
+              "required": []
+            }
+          }
+        },
+        {
+          "id": "1",
+          "function_id": "#/functions/create_issue",
+          "inputs": {
+            "user_id": "{{steps.0.interactivity.interactor.id}}",
+            "project": "{{steps.0.fields.project}}",
+            "issuetype": "{{steps.0.fields.issuetype}}",
+            "summary": "{{steps.0.fields.summary}}",
+            "description": "{{steps.0.fields.description}}"
+          }
+        },
+        {
+          "id": "2",
+          "function_id": "slack#/functions/send_dm",
+          "inputs": {
+            "user_id": "{{steps.0.interactivity.interactor.id}}",
+            "message": "{{steps.1.issue_url}}"
+          }
+        }
+      ]
     }
   }
 }
