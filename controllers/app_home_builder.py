@@ -27,6 +27,23 @@ class AppHomeBuilder:
             ],
         }
 
+    def add_oauth_link_button(self, authorization_url):
+        self.view["blocks"].append(
+            {
+                "type": "actions",
+                "elements": [
+                    {
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "Link Jira",
+                        },
+                        "url": authorization_url,
+                    }
+                ],
+            }
+        )
+
     def add_pat_submit_button(self):
         self.view["blocks"].append(
             {

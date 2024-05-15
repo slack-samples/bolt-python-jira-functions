@@ -2,7 +2,6 @@ import logging
 import os
 from flask import Flask, request, redirect
 import requests
-import urllib.parse
 
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
@@ -27,15 +26,15 @@ register_listeners(app)
 
 flask_app = Flask(__name__)
 
-params = {
-    "client_id": jira_client_id,
-    "redirect_uri": jira_redirect_uri,
-    "response_type": "code",
-    "scope": "WRITE",
-    "code_challenge": jira_code_verifier,
-    "code_challenge_method": "plain",
-}
-authorization_url = f"{JIRA_BASE_URL}/rest/oauth2/latest/authorize?{urllib.parse.urlencode(params)}"
+# params = {
+#     "client_id": jira_client_id,
+#     "redirect_uri": jira_redirect_uri,
+#     "response_type": "code",
+#     "scope": "WRITE",
+#     "code_challenge": jira_code_verifier,
+#     "code_challenge_method": "plain",
+# }
+# authorization_url = f"{JIRA_BASE_URL}/rest/oauth2/latest/authorize?{urllib.parse.urlencode(params)}"
 
 
 class JiraInstallation:
@@ -47,11 +46,12 @@ class JiraInstallation:
         self.refresh_token = refresh_token
 
 
-print(f"Please go to {authorization_url} and authorize access.")
+# print(f"Please go to {authorization_url} and authorize access.")
 
 
-@flask_app.route(oauth_redirect_path, methods=["GET"])
+@flask_app.route("/oauth/redirect", methods=["GET"])
 def oauth_redirect():
+    print(request.args)
     headers = {"Content-Type": "application/x-www-form-urlencoded", "TSAuth-Token": os.getenv("HEADER_TSAuth_Token")}
     resp = requests.post(
         url=f"{JIRA_BASE_URL}/rest/oauth2/latest/token",
