@@ -4,3 +4,4 @@ pytest
 flake8==7.0.0
 black==23.12.1
 requests
+Flask==3.0.3
