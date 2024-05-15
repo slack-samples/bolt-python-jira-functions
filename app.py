@@ -6,6 +6,16 @@ import requests
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
+from constants import (
+    OAUTH_REDIRECT_PATH,
+    JIRA_BASE_URL,
+    JIRA_CLIENT_ID,
+    JIRA_CLIENT_SECRET,
+    JIRA_CODE_VERIFIER,
+    JIRA_REDIRECT_URI,
+    APP_HOME_PAGE_URL,
+    OAUTH_STATE_TABLE,
+)
 from listeners import register_listeners
 
 logging.basicConfig(level=logging.INFO)
@@ -13,28 +23,8 @@ logging.basicConfig(level=logging.INFO)
 app = App(token=os.environ.get("SLACK_BOT_TOKEN"))
 flask_app = Flask(__name__)
 
-JIRA_BASE_URL = os.getenv("JIRA_BASE_URL")
-oauth_redirect_path = "/oauth/redirect"
-jira_client_id = os.getenv("JIRA_CLIENT_ID")
-jira_client_secret = os.getenv("JIRA_CLIENT_SECRET")
-jira_code_verifier = os.getenv("CODE_VERIFIER")
-jira_redirect_uri = os.getenv("APP_BASE_URL") + oauth_redirect_path
-app_home_page_url = os.getenv("APP_HOME_PAGE_URL")
-
 # Register Listeners
 register_listeners(app)
-
-flask_app = Flask(__name__)
-
-# params = {
-#     "client_id": jira_client_id,
-#     "redirect_uri": jira_redirect_uri,
-#     "response_type": "code",
-#     "scope": "WRITE",
-#     "code_challenge": jira_code_verifier,
-#     "code_challenge_method": "plain",
-# }
-# authorization_url = f"{JIRA_BASE_URL}/rest/oauth2/latest/authorize?{urllib.parse.urlencode(params)}"
 
 
 class JiraInstallation:
@@ -46,22 +36,20 @@ class JiraInstallation:
         self.refresh_token = refresh_token
 
 
-# print(f"Please go to {authorization_url} and authorize access.")
-
-
-@flask_app.route("/oauth/redirect", methods=["GET"])
+@flask_app.route(OAUTH_REDIRECT_PATH, methods=["GET"])
 def oauth_redirect():
-    print(request.args)
+    code = request.args["code"]
+    state = request.args["state"]
     headers = {"Content-Type": "application/x-www-form-urlencoded", "TSAuth-Token": os.getenv("HEADER_TSAuth_Token")}
     resp = requests.post(
         url=f"{JIRA_BASE_URL}/rest/oauth2/latest/token",
         params={
             "grant_type": "authorization_code",
-            "client_id": jira_client_id,
-            "client_secret": jira_client_secret,
-            "code": request.args["code"],
-            "redirect_uri": jira_redirect_uri,
-            "code_verifier": jira_code_verifier,
+            "client_id": JIRA_CLIENT_ID,
+            "client_secret": JIRA_CLIENT_SECRET,
+            "code": code,
+            "redirect_uri": JIRA_REDIRECT_URI,
+            "code_verifier": JIRA_CODE_VERIFIER,
         },
         headers=headers,
     )
@@ -74,8 +62,13 @@ def oauth_redirect():
         expires_in=json["expires_in"],
         refresh_token=json["refresh_token"],
     )
-    print(jira_installation)
-    return redirect(app_home_page_url, code=302)
+    print(jira_installation.access_token)
+    user_indentity = OAUTH_STATE_TABLE[state]
+    print(user_indentity.user_id)
+    print(user_indentity.enterprise_id)
+    print(user_indentity.team_id)
+    del OAUTH_STATE_TABLE[state]
+    return redirect(APP_HOME_PAGE_URL, code=302)
 
 
 if __name__ == "__main__":

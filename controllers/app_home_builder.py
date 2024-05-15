@@ -39,6 +39,7 @@ class AppHomeBuilder:
                             "text": "Link Jira",
                         },
                         "url": authorization_url,
+                        "action_id": "oauth_url",
                     }
                 ],
             }
