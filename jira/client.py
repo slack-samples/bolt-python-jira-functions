@@ -1,3 +1,4 @@
+import json
 import os
 from typing import Dict, Optional
 from urllib.parse import urlencode, urljoin
@@ -103,26 +104,9 @@ class JiraClient:
         )
         return self.api_call("/rest/oauth2/latest/token", headers=headers, params=kwargs)
 
-    def create_issue(
-        self,
-        *,
-        code: str,
-        client_id: str,
-        client_secret: str,
-        redirect_uri: str,
-        code_verifier: str,
-        grant_type="authorization_code",
-        **kwargs,
-    ) -> Response:
-        headers = {"Content-Type": "application/x-www-form-urlencoded"}
-        kwargs.update(
-            {
-                "grant_type": grant_type,
-                "client_id": client_id,
-                "client_secret": client_secret,
-                "code": code,
-                "redirect_uri": redirect_uri,
-                "code_verifier": code_verifier,
-            }
-        )
-        return self.api_call("/rest/api/latest/issue", headers=headers, params=kwargs)
+    def create_issue(self, *, data: dict) -> Response:
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        }
+        return self.api_call("/rest/api/latest/issue", headers=headers, data=json.dumps(data))

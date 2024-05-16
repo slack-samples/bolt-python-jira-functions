@@ -1,11 +1,9 @@
 import json
 import logging
-import os
-
-import requests
 from slack_bolt import Ack, Complete, Fail
 
 from controllers import PersonalAccessTokenTable
+from jira.client import JiraClient
 
 
 # https://developer.atlassian.com/server/jira/platform/jira-rest-api-examples/
@@ -19,25 +17,37 @@ def create_issue_callback(ack: Ack, inputs: dict, fail: Fail, complete: Complete
         # TODO send a message to user on how to fix this
         return fail(f"User {user_id} has not set up their PAT properly, visit the app home to do this")
 
-    JIRA_BASE_URL = os.getenv("JIRA_BASE_URL")
+    # JIRA_BASE_URL = os.getenv("JIRA_BASE_URL")
 
-    headers = {
-        "Authorization": f"Bearer {pat_table.read_pat(user_id)}",
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-    }
+    # headers = {
+    #     "Authorization": f"Bearer {pat_table.read_pat(user_id)}",
+    #     "Accept": "application/json",
+    #     "Content-Type": "application/json",
+    # }
 
-    for name, value in os.environ.items():
-        if name.startswith("HEADER_"):
-            headers[name.split("HEADER_")[1].replace("_", "-")] = value
+    # for name, value in os.environ.items():
+    #     if name.startswith("HEADER_"):
+    #         headers[name.split("HEADER_")[1].replace("_", "-")] = value
 
     try:
         project: str = inputs["project"]
         issue_type: str = inputs["issuetype"]
 
-        url = f"{JIRA_BASE_URL}/rest/api/latest/issue"
+        # url = f"{JIRA_BASE_URL}/rest/api/latest/issue"
 
-        payload = json.dumps(
+        # payload = json.dumps(
+        #     {
+        #         "fields": {
+        #             "description": inputs["description"],
+        #             "issuetype": {"id" if issue_type.isdigit() else "name": issue_type},
+        #             "project": {"id" if project.isdigit() else "key": project},
+        #             "summary": inputs["summary"],
+        #         },
+        #     }
+        # )
+        # response = requests.post(url, data=payload, headers=headers)
+        jira_client = JiraClient()
+        response = jira_client.create_issue(
             {
                 "fields": {
                     "description": inputs["description"],
@@ -47,8 +57,6 @@ def create_issue_callback(ack: Ack, inputs: dict, fail: Fail, complete: Complete
                 },
             }
         )
-
-        response = requests.post(url, data=payload, headers=headers)
 
         response.raise_for_status()
         jason_data = json.loads(response.text)
