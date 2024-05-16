@@ -63,7 +63,7 @@ class FileInstallationStore(InstallationStore):
         *,
         enterprise_id: Optional[str],
         team_id: Optional[str],
-        user_id: Optional[str] = None,
+        user_id: str,
     ) -> None:
         none = "none"
         e_id = enterprise_id or none

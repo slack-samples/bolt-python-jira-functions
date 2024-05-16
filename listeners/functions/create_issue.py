@@ -1,21 +1,28 @@
 import json
 import logging
-from slack_bolt import Ack, Complete, Fail
-
-from controllers import PersonalAccessTokenTable
+from slack_bolt import Ack, BoltContext, Complete, Fail
+from globals import JIRA_FILE_INSTALLATION_STORE
 from jira.client import JiraClient
 
 
 # https://developer.atlassian.com/server/jira/platform/jira-rest-api-examples/
 # https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issues/#api-rest-api-2-issue-post
-def create_issue_callback(ack: Ack, inputs: dict, fail: Fail, complete: Complete, logger: logging.Logger):
+def create_issue_callback(
+    ack: Ack, inputs: dict, fail: Fail, complete: Complete, logger: logging.Logger, context: BoltContext
+):
     ack()
-    pat_table = PersonalAccessTokenTable()
+    # pat_table = PersonalAccessTokenTable()
 
     user_id = inputs["user_id"]
-    if user_id not in pat_table:
-        # TODO send a message to user on how to fix this
-        return fail(f"User {user_id} has not set up their PAT properly, visit the app home to do this")
+    installation = JIRA_FILE_INSTALLATION_STORE.find_installation(
+        user_id=context.user_id, team_id=context.team_id, enterprise_id=context.enterprise_id
+    )
+
+    if installation is None:
+        return fail(f"User {user_id} has not connected their account properly, visit the app home to do this")
+    # if user_id not in pat_table:
+    #     # TODO send a message to user on how to fix this
+    #     return fail(f"User {user_id} has not set up their PAT properly, visit the app home to do this")
 
     # JIRA_BASE_URL = os.getenv("JIRA_BASE_URL")
 
