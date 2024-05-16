@@ -1,11 +1,8 @@
 import os
-from typing import Dict
 
 from oauth.installation_store import FileInstallationStore
-from oauth.models import UserIdentity
 
 OAUTH_REDIRECT_PATH = "/oauth/redirect"
-OAUTH_STATE_TABLE: Dict[str, UserIdentity] = {}
 JIRA_FILE_INSTALLATION_STORE = FileInstallationStore(base_dir="./data/installations")
 
 JIRA_BASE_URL = os.getenv("JIRA_BASE_URL")  # https://jira.atlassian.com

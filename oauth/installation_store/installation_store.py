@@ -1,6 +1,6 @@
 from typing import Optional
 
-from .models.jira_installation import JiraInstallation
+from .models import JiraInstallation
 
 
 class InstallationStore:

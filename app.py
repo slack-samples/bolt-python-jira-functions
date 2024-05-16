@@ -14,10 +14,10 @@ from globals import (
     JIRA_FILE_INSTALLATION_STORE,
     JIRA_REDIRECT_URI,
     OAUTH_REDIRECT_PATH,
-    OAUTH_STATE_TABLE,
 )
 from jira.client import JiraClient
 from listeners import register_listeners
+from oauth.state_store.memory import MemoryOAuthStateStore
 
 logging.basicConfig(level=logging.INFO)
 
@@ -41,7 +41,7 @@ def oauth_redirect():
         redirect_uri=JIRA_REDIRECT_URI,
     )
     jira_resp.raise_for_status()
-    user_identity = OAUTH_STATE_TABLE[state]
+    user_identity = MemoryOAuthStateStore.consume(state)
     jira_resp_json = jira_resp.json()
     JIRA_FILE_INSTALLATION_STORE.save(
         {
@@ -56,7 +56,6 @@ def oauth_redirect():
             "user_id": user_identity.user_id,
         }
     )
-    del OAUTH_STATE_TABLE[state]
     return redirect(APP_HOME_PAGE_URL, code=302)
 
 

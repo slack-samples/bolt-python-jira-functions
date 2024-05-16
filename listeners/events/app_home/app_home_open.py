@@ -1,8 +1,10 @@
-import uuid
 from logging import Logger
 
 from slack_bolt import BoltContext
 from slack_sdk import WebClient
+
+from oauth.state_store.memory import MemoryOAuthStateStore
+from oauth.state_store.models import UserIdentity
 
 from .builder import AppHomeBuilder
 from globals import (
@@ -10,13 +12,11 @@ from globals import (
     JIRA_CODE_VERIFIER,
     JIRA_FILE_INSTALLATION_STORE,
     JIRA_REDIRECT_URI,
-    OAUTH_STATE_TABLE,
-    UserIdentity,
 )
 from jira.client import JiraClient
 
 
-def app_home_open_callback(client: WebClient, event: dict, logger: Logger, context: BoltContext):
+def app_home_open_callback(client: WebClient, event: dict, logger: Logger, context: BoltContext, payload: dict):
     # ignore the app_home_opened event for anything but the Home tab
     if event["tab"] != "home":
         return
@@ -27,9 +27,10 @@ def app_home_open_callback(client: WebClient, event: dict, logger: Logger, conte
         )
 
         if installation is None:
-            state = uuid.uuid4().hex
-            OAUTH_STATE_TABLE[state] = UserIdentity(
-                user_id=context.user_id, team_id=context.team_id, enterprise_id=context.enterprise_id
+            state = MemoryOAuthStateStore.issue(
+                user_identity=UserIdentity(
+                    user_id=context.user_id, team_id=context.team_id, enterprise_id=context.enterprise_id
+                )
             )
             jira_client = JiraClient()
             authorization_url = jira_client.build_authorization_url(
