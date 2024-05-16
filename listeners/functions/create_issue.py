@@ -11,51 +11,21 @@ def create_issue_callback(
     ack: Ack, inputs: dict, fail: Fail, complete: Complete, logger: logging.Logger, context: BoltContext
 ):
     ack()
-    # pat_table = PersonalAccessTokenTable()
+    user_id = inputs["user_context"]["id"]
 
-    user_id = inputs["user_id"]
     installation = FileInstallationStore().find_installation(
-        user_id=context.user_id, team_id=context.team_id, enterprise_id=context.enterprise_id
+        user_id=user_id, team_id=context.team_id, enterprise_id=context.enterprise_id
     )
-
     if installation is None:
-        return fail(f"User {user_id} has not connected their account properly, visit the app home to do this")
-    # if user_id not in pat_table:
-    #     # TODO send a message to user on how to fix this
-    #     return fail(f"User {user_id} has not set up their PAT properly, visit the app home to do this")
-
-    # JIRA_BASE_URL = os.getenv("JIRA_BASE_URL")
-
-    # headers = {
-    #     "Authorization": f"Bearer {pat_table.read_pat(user_id)}",
-    #     "Accept": "application/json",
-    #     "Content-Type": "application/json",
-    # }
-
-    # for name, value in os.environ.items():
-    #     if name.startswith("HEADER_"):
-    #         headers[name.split("HEADER_")[1].replace("_", "-")] = value
+        return fail(f"User {user_id} has not connected their account properly, visit the app home to solve this")
 
     try:
         project: str = inputs["project"]
         issue_type: str = inputs["issuetype"]
 
-        # url = f"{JIRA_BASE_URL}/rest/api/latest/issue"
-
-        # payload = json.dumps(
-        #     {
-        #         "fields": {
-        #             "description": inputs["description"],
-        #             "issuetype": {"id" if issue_type.isdigit() else "name": issue_type},
-        #             "project": {"id" if project.isdigit() else "key": project},
-        #             "summary": inputs["summary"],
-        #         },
-        #     }
-        # )
-        # response = requests.post(url, data=payload, headers=headers)
-        jira_client = JiraClient()
+        jira_client = JiraClient(token=installation["access_token"])
         response = jira_client.create_issue(
-            {
+            data={
                 "fields": {
                     "description": inputs["description"],
                     "issuetype": {"id" if issue_type.isdigit() else "name": issue_type},

@@ -37,7 +37,7 @@
       "description": "Create a JIRA SERVER issue",
       "input_parameters": {
         "properties": {
-          "user_id": {
+          "user_context": {
             "type": "slack#/types/user_context",
             "title": "Represents a user who interacted with a workflow at runtime.",
             "is_required": true
