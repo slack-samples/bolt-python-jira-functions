@@ -6,14 +6,9 @@ from flask import Flask, redirect, request
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
-from globals import (
-    APP_HOME_PAGE_URL,
-    JIRA_CLIENT_ID,
-    JIRA_CLIENT_SECRET,
-    JIRA_CODE_VERIFIER,
-    JIRA_REDIRECT_URI,
-    OAUTH_REDIRECT_PATH,
-)
+from globals import (APP_HOME_PAGE_URL, JIRA_CLIENT_ID, JIRA_CLIENT_SECRET,
+                     JIRA_CODE_VERIFIER, JIRA_REDIRECT_URI,
+                     OAUTH_REDIRECT_PATH)
 from jira.client import JiraClient
 from listeners import register_listeners
 from oauth.installation_store.file import FileInstallationStore

@@ -1,7 +1,7 @@
-from typing import Dict
 import uuid
-from .models import UserIdentity
+from typing import Dict
 
+from .models import UserIdentity
 
 OAUTH_STATE_TABLE: Dict[str, UserIdentity] = {}
 

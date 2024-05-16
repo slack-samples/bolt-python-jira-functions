@@ -3,17 +3,13 @@ from logging import Logger
 from slack_bolt import BoltContext
 from slack_sdk import WebClient
 
+from globals import JIRA_CLIENT_ID, JIRA_CODE_VERIFIER, JIRA_REDIRECT_URI
+from jira.client import JiraClient
 from oauth.installation_store.file import FileInstallationStore
 from oauth.state_store.memory import MemoryOAuthStateStore
 from oauth.state_store.models import UserIdentity
 
 from .builder import AppHomeBuilder
-from globals import (
-    JIRA_CLIENT_ID,
-    JIRA_CODE_VERIFIER,
-    JIRA_REDIRECT_URI,
-)
-from jira.client import JiraClient
 
 
 def app_home_open_callback(client: WebClient, event: dict, logger: Logger, context: BoltContext, payload: dict):

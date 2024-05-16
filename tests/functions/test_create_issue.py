@@ -4,8 +4,8 @@ import os
 from unittest.mock import MagicMock, patch
 
 import requests
-
 from controllers import PersonalAccessTokenTable
+
 from listeners.functions.create_issue import create_issue_callback
 from tests.utils import remove_os_env_temporarily, restore_os_env
 
