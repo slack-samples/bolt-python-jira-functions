@@ -38,6 +38,5 @@ logs/
 .pytype/
 
 #tmp
-requirements.txt
 .slack
 data
