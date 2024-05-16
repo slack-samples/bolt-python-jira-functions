@@ -1,6 +1,5 @@
 from typing import TypedDict
 
-
 context = "<https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html|Personal access tokens>\
 (PATs) are a secure way to use scripts and integrate external applications with your Atlassian application. To use the\
 functions defined by this app you will need to add your own, click the add button to submit yours."

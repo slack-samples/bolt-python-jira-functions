@@ -3,7 +3,7 @@ from logging import Logger
 from slack_bolt import Ack
 from slack_sdk import WebClient
 
-from controllers import PersonalAccessTokenTable, AppHomeBuilder
+from controllers import AppHomeBuilder, PersonalAccessTokenTable
 
 
 def submit_pat_callback(ack: Ack, client: WebClient, body: dict, logger: Logger):

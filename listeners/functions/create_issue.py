@@ -1,10 +1,11 @@
+import json
 import logging
 import os
 
-from slack_bolt import Complete, Fail, Ack
 import requests
+from slack_bolt import Ack, Complete, Fail
+
 from controllers import PersonalAccessTokenTable
-import json
 
 
 # https://developer.atlassian.com/server/jira/platform/jira-rest-api-examples/

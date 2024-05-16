@@ -7,7 +7,7 @@ import urllib.parse
 
 from controllers import AppHomeBuilder
 
-from constants import JIRA_BASE_URL, JIRA_CLIENT_ID, JIRA_CODE_VERIFIER, JIRA_REDIRECT_URI, OAUTH_STATE_TABLE, UserIdentity
+from globals import JIRA_BASE_URL, JIRA_CLIENT_ID, JIRA_CODE_VERIFIER, JIRA_REDIRECT_URI, OAUTH_STATE_TABLE, UserIdentity
 
 
 def app_home_open_callback(client: WebClient, event: dict, logger: Logger, context: BoltContext):
