@@ -2,14 +2,12 @@ import logging
 import os
 from datetime import datetime
 
-import requests
 from flask import Flask, redirect, request
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 from globals import (
     APP_HOME_PAGE_URL,
-    JIRA_BASE_URL,
     JIRA_CLIENT_ID,
     JIRA_CLIENT_SECRET,
     JIRA_CODE_VERIFIER,
@@ -18,6 +16,7 @@ from globals import (
     OAUTH_REDIRECT_PATH,
     OAUTH_STATE_TABLE,
 )
+from jira.client import JiraClient
 from listeners import register_listeners
 
 logging.basicConfig(level=logging.INFO)
@@ -33,17 +32,13 @@ register_listeners(app)
 def oauth_redirect():
     code = request.args["code"]
     state = request.args["state"]
-    jira_resp = requests.post(
-        url=f"{JIRA_BASE_URL}/rest/oauth2/latest/token",
-        params={
-            "grant_type": "authorization_code",
-            "client_id": JIRA_CLIENT_ID,
-            "client_secret": JIRA_CLIENT_SECRET,
-            "code": code,
-            "redirect_uri": JIRA_REDIRECT_URI,
-            "code_verifier": JIRA_CODE_VERIFIER,
-        },
-        headers={"Content-Type": "application/x-www-form-urlencoded", "TSAuth-Token": os.getenv("HEADER_TSAuth_Token")},
+    jira_client = JiraClient()
+    jira_resp = jira_client.oauth2_token(
+        code=code,
+        client_id=JIRA_CLIENT_ID,
+        client_secret=JIRA_CLIENT_SECRET,
+        code_verifier=JIRA_CODE_VERIFIER,
+        redirect_uri=JIRA_REDIRECT_URI,
     )
     jira_resp.raise_for_status()
     user_identity = OAUTH_STATE_TABLE[state]

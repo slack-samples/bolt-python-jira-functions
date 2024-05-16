@@ -1,13 +1,12 @@
-from logging import Logger
 import uuid
+from logging import Logger
 
-from slack_sdk import WebClient
 from slack_bolt import BoltContext
-import urllib.parse
+from slack_sdk import WebClient
 
 from controllers import AppHomeBuilder
-
-from globals import JIRA_BASE_URL, JIRA_CLIENT_ID, JIRA_CODE_VERIFIER, JIRA_REDIRECT_URI, OAUTH_STATE_TABLE, UserIdentity
+from globals import JIRA_CLIENT_ID, JIRA_CODE_VERIFIER, JIRA_REDIRECT_URI, OAUTH_STATE_TABLE, UserIdentity
+from jira.client import JiraClient
 
 
 def app_home_open_callback(client: WebClient, event: dict, logger: Logger, context: BoltContext):
@@ -20,16 +19,14 @@ def app_home_open_callback(client: WebClient, event: dict, logger: Logger, conte
     )
     try:
         home = AppHomeBuilder()
-        params = {
-            "client_id": JIRA_CLIENT_ID,
-            "redirect_uri": JIRA_REDIRECT_URI,
-            "response_type": "code",
-            "scope": "WRITE",
-            "code_challenge": JIRA_CODE_VERIFIER,
-            "code_challenge_method": "plain",
-            "state": state,
-        }
-        authorization_url = f"{JIRA_BASE_URL}/rest/oauth2/latest/authorize?{urllib.parse.urlencode(params)}"
+        jira_client = JiraClient()
+        authorization_url = jira_client.build_authorization_url(
+            client_id=JIRA_CLIENT_ID,
+            redirect_uri=JIRA_REDIRECT_URI,
+            scope="WRITE",
+            code_challenge=JIRA_CODE_VERIFIER,
+            state=state,
+        )
         home.add_oauth_link_button(authorization_url)
         client.views_publish(user_id=context.user_id, view=home.view)
     except Exception as e:

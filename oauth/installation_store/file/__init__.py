@@ -6,7 +6,7 @@ from logging import Logger
 from pathlib import Path
 from typing import Optional, Union
 
-from oauth.installation_store import InstallationStore
+from oauth.installation_store.installation_store import InstallationStore
 from oauth.installation_store.models.jira_installation import JiraInstallation
 
 
