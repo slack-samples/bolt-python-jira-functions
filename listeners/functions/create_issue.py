@@ -1,8 +1,8 @@
 import json
 import logging
 from slack_bolt import Ack, BoltContext, Complete, Fail
-from globals import JIRA_FILE_INSTALLATION_STORE
 from jira.client import JiraClient
+from oauth.installation_store.file import FileInstallationStore
 
 
 # https://developer.atlassian.com/server/jira/platform/jira-rest-api-examples/
@@ -14,7 +14,7 @@ def create_issue_callback(
     # pat_table = PersonalAccessTokenTable()
 
     user_id = inputs["user_id"]
-    installation = JIRA_FILE_INSTALLATION_STORE.find_installation(
+    installation = FileInstallationStore().find_installation(
         user_id=context.user_id, team_id=context.team_id, enterprise_id=context.enterprise_id
     )
 
