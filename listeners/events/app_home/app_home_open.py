@@ -12,7 +12,7 @@ from oauth.state_store.models import UserIdentity
 from .builder import AppHomeBuilder
 
 
-def app_home_open_callback(client: WebClient, event: dict, logger: Logger, context: BoltContext, payload: dict):
+def app_home_open_callback(client: WebClient, event: dict, logger: Logger, context: BoltContext):
     # ignore the app_home_opened event for anything but the Home tab
     if event["tab"] != "home":
         return

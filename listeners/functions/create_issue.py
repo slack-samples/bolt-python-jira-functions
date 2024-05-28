@@ -21,7 +21,8 @@ def create_issue_callback(
     )
     if installation is None:
         client.chat_postMessage(
-            text="The function failed because the is no connected jira account, visit the app home to solve this"
+            channel=user_id,
+            text="The function failed because the is no connected jira account, visit the app home to solve this",
         )
         return fail(f"User {user_id} has not connected their account properly, visit the app home to solve this")
 

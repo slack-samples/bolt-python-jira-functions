@@ -12,8 +12,7 @@ from tests.utils import remove_os_env_temporarily, restore_os_env
 
 
 def mock_response(status=200, data: dict = None):
-    mock_resp = MagicMock()
-    mock_resp.status_code = status
+    mock_resp = MagicMock(status_code=status)
     if data:
         mock_resp.json = MagicMock(return_value=data)
         mock_resp.text = json.dumps(data)
@@ -92,3 +91,41 @@ class TestCreateIssue:
         mock_ack.assert_called_once()
         mock_complete.assert_called_once()
         assert mock_complete.call_args[1] == {"outputs": {"issue_url": "https://jira-dev/browse/PROJ-1"}}
+
+    def test_create_issue_fail(self):
+        mock_ack = MagicMock()
+        mock_fail = MagicMock()
+        mock_complete = MagicMock()
+        mock_context = MagicMock(team_id=self.team_id, enterprise_id=self.enterprise_id)
+        mock_client = MagicMock(chat_postMessage=lambda channel, text: True)
+        mock_inputs = {
+            "user_context": {"id": "wrong_id"},
+            "project": "PROJ",
+            "issuetype": "Bug",
+            "summary": "this is a test from python",
+            "description": "this is a test from python",
+        }
+
+        with patch.object(requests, "request") as mock_requests:
+            mock_requests.return_value = mock_response(
+                status=201,
+                data={
+                    "id": "1234",
+                    "key": "PROJ-1",
+                    "self": "https://jira-dev/rest/api/2/issue/1234",
+                },
+            )
+            create_issue_callback(
+                ack=mock_ack,
+                inputs=mock_inputs,
+                fail=mock_fail,
+                complete=mock_complete,
+                context=mock_context,
+                client=mock_client,
+                logger=logging.getLogger(),
+            )
+
+        mock_ack.assert_called_once()
+        mock_fail.assert_called_once()
+        mock_requests.assert_not_called()
+        mock_complete.assert_not_called()
