@@ -23,7 +23,7 @@ class JiraClient:
         self.base_url = base_url
         self.token_type = token_type
         self.headers = headers or {}
-        self.headers["TSAuth-Token"] = os.getenv("HEADER_TSAuth_Token")
+        self.headers[os.getenv("SECRET_HEADER_KEY")] = os.getenv("SECRET_HEADER_VALUE")
         if token is not None:
             self.headers["Authorization"] = f"{self.token_type} {self.token}"
         self.proxies = proxies
