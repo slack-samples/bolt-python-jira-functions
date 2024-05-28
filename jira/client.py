@@ -6,21 +6,19 @@ from urllib.parse import urlencode, urljoin
 import requests
 from requests import Response
 
-from globals import JIRA_BASE_URL
-
 
 class JiraClient:
 
     def __init__(
         self,
         token: Optional[str] = None,
-        base_url: str = JIRA_BASE_URL,
+        base_url: Optional[str] = None,
         token_type: Optional[str] = "Bearer",
         headers: Optional[dict] = None,
         proxies: Optional[Dict[str, str]] = None,
     ):
         self.token = token
-        self.base_url = base_url
+        self.base_url = base_url or os.environ.get("JIRA_BASE_URL")
         self.token_type = token_type
         self.headers = headers or {}
         self.headers[os.getenv("SECRET_HEADER_KEY")] = os.getenv("SECRET_HEADER_VALUE")
@@ -79,6 +77,14 @@ class JiraClient:
             }
         )
         return f"{urljoin(self.base_url, '/rest/oauth2/latest/authorize')}?{urlencode(kwargs)}"
+
+    def build_issue_url(
+        self,
+        *,
+        key: str,
+        **kwargs,
+    ) -> str:
+        return f"{urljoin(self.base_url, f'/browse/{key}')}"
 
     def oauth2_token(
         self,

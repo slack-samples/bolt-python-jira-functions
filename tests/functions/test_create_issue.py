@@ -1,12 +1,13 @@
+from datetime import datetime
 import json
 import logging
 import os
 from unittest.mock import MagicMock, patch
 
 import requests
-from controllers import PersonalAccessTokenTable
 
 from listeners.functions.create_issue import create_issue_callback
+from tests.mock_installation_store import MockInstallationStore
 from tests.utils import remove_os_env_temporarily, restore_os_env
 
 
@@ -20,30 +21,54 @@ def mock_response(status=200, data: dict = None):
 
 
 class TestCreateIssue:
+    user_id = "U1234"
+    team_id = "T1234"
+    enterprise_id = "E1234"
+
+    def build_mock_installation_store(self):
+        installation_store = MockInstallationStore()
+        installation_store.save(
+            {
+                "scope": "WRITE",
+                "access_token": "jira_access_token",
+                "token_type": "Bearer",
+                "expires_in": 1000,
+                "refresh_token": "jira_refresh_token",
+                "user_id": self.user_id,
+                "team_id": "T1234",
+                "enterprise_id": "E1234",
+                "installed_at": datetime.now().timestamp(),
+            }
+        )
+        return installation_store
+
     def setup_method(self):
         self.old_os_env = remove_os_env_temporarily()
-        PersonalAccessTokenTable().clear()
+        os.environ["JIRA_BASE_URL"] = "https://jira-dev/"
+        self.mock_installation_store = patch(
+            "listeners.functions.create_issue.FileInstallationStore", self.build_mock_installation_store
+        )
+        self.mock_installation_store.start()
 
     def teardown_method(self):
-        PersonalAccessTokenTable().clear()
+        self.mock_installation_store.stop()
         restore_os_env(self.old_os_env)
 
     def test_create_issue(self):
         mock_ack = MagicMock()
         mock_fail = MagicMock()
         mock_complete = MagicMock()
-        mock_input = {
-            "user_id": "me",
+        mock_context = MagicMock(team_id=self.team_id, enterprise_id=self.enterprise_id)
+        mock_client = MagicMock()
+        mock_inputs = {
+            "user_context": {"id": self.user_id},
             "project": "PROJ",
             "issuetype": "Bug",
             "summary": "this is a test from python",
             "description": "this is a test from python",
         }
-        PersonalAccessTokenTable().create_user("me", "my_pat_token")
 
-        os.environ["JIRA_BASE_URL"] = "https://jira-dev/"
-
-        with patch.object(requests, "post") as mock_requests:
+        with patch.object(requests, "request") as mock_requests:
             mock_requests.return_value = mock_response(
                 status=201,
                 data={
@@ -52,9 +77,18 @@ class TestCreateIssue:
                     "self": "https://jira-dev/rest/api/2/issue/1234",
                 },
             )
-            create_issue_callback(mock_ack, mock_input, mock_fail, mock_complete, logging.getLogger())
-            mock_requests.assert_called_once()
+            create_issue_callback(
+                ack=mock_ack,
+                inputs=mock_inputs,
+                fail=mock_fail,
+                complete=mock_complete,
+                context=mock_context,
+                client=mock_client,
+                logger=logging.getLogger(),
+            )
 
+        mock_fail.assert_not_called()
+        mock_requests.assert_called_once()
         mock_ack.assert_called_once()
         mock_complete.assert_called_once()
-        assert mock_complete.call_args[1] == {"outputs": {"issue_url": "https://jira-dev/rest/api/2/issue/1234"}}
+        assert mock_complete.call_args[1] == {"outputs": {"issue_url": "https://jira-dev/browse/PROJ-1"}}

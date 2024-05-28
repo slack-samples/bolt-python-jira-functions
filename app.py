@@ -6,9 +6,14 @@ from flask import Flask, redirect, request
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
-from globals import (APP_HOME_PAGE_URL, JIRA_CLIENT_ID, JIRA_CLIENT_SECRET,
-                     JIRA_CODE_VERIFIER, JIRA_REDIRECT_URI,
-                     OAUTH_REDIRECT_PATH)
+from internals import (
+    APP_HOME_PAGE_URL,
+    JIRA_CLIENT_ID,
+    JIRA_CLIENT_SECRET,
+    JIRA_CODE_VERIFIER,
+    JIRA_REDIRECT_URI,
+    OAUTH_REDIRECT_PATH,
+)
 from jira.client import JiraClient
 from listeners import register_listeners
 from oauth.installation_store.file import FileInstallationStore
@@ -44,14 +49,14 @@ def oauth_redirect():
     FileInstallationStore().save(
         {
             "access_token": jira_resp_json["access_token"],
-            "enterprise_id": user_identity.enterprise_id,
+            "enterprise_id": user_identity["enterprise_id"],
             "expires_in": jira_resp_json["expires_in"],
             "installed_at": datetime.now().timestamp(),
             "refresh_token": jira_resp_json["refresh_token"],
             "scope": jira_resp_json["scope"],
-            "team_id": user_identity.team_id,
+            "team_id": user_identity["team_id"],
             "token_type": jira_resp_json["token_type"],
-            "user_id": user_identity.user_id,
+            "user_id": user_identity["user_id"],
         }
     )
     return redirect(APP_HOME_PAGE_URL, code=302)

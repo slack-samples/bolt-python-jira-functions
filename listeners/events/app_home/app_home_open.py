@@ -3,7 +3,7 @@ from logging import Logger
 from slack_bolt import BoltContext
 from slack_sdk import WebClient
 
-from globals import JIRA_CLIENT_ID, JIRA_CODE_VERIFIER, JIRA_REDIRECT_URI
+from internals import JIRA_CLIENT_ID, JIRA_CODE_VERIFIER, JIRA_REDIRECT_URI
 from jira.client import JiraClient
 from oauth.installation_store.file import FileInstallationStore
 from oauth.state_store.memory import MemoryOAuthStateStore

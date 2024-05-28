@@ -2,6 +2,7 @@ import json
 import logging
 
 from slack_bolt import Ack, BoltContext, Complete, Fail
+from slack_sdk import WebClient
 
 from jira.client import JiraClient
 from oauth.installation_store.file import FileInstallationStore
@@ -10,7 +11,7 @@ from oauth.installation_store.file import FileInstallationStore
 # https://developer.atlassian.com/server/jira/platform/jira-rest-api-examples/
 # https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issues/#api-rest-api-2-issue-post
 def create_issue_callback(
-    ack: Ack, inputs: dict, fail: Fail, complete: Complete, logger: logging.Logger, context: BoltContext
+    ack: Ack, inputs: dict, fail: Fail, complete: Complete, context: BoltContext, client: WebClient, logger: logging.Logger
 ):
     ack()
     user_id = inputs["user_context"]["id"]
@@ -19,6 +20,9 @@ def create_issue_callback(
         user_id=user_id, team_id=context.team_id, enterprise_id=context.enterprise_id
     )
     if installation is None:
+        client.chat_postMessage(
+            text="The function failed because the is no connected jira account, visit the app home to solve this"
+        )
         return fail(f"User {user_id} has not connected their account properly, visit the app home to solve this")
 
     try:
@@ -39,7 +43,11 @@ def create_issue_callback(
 
         response.raise_for_status()
         jason_data = json.loads(response.text)
-        complete(outputs={"issue_url": jason_data["self"]})
+        complete(
+            outputs={
+                "issue_url": jira_client.build_issue_url(key=jason_data["key"]),
+            }
+        )
     except Exception as e:
         logger.exception(e)
         fail(f"Failed to handle a function request (error: {e})")
