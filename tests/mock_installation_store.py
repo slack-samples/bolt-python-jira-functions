@@ -16,14 +16,8 @@ class MockInstallationStore(InstallationStore):
         self.logger = logger
 
     def save(self, installation: JiraInstallation):
-        none = "none"
-        e_id = installation["enterprise_id"] or none
-        t_id = installation["team_id"] or none
-        team_installation_dir = f"{e_id}-{t_id}"
-
-        u_id = installation["user_id"]
-        installer_filepath = f"{team_installation_dir}/installer-{u_id}-latest"
-        self.installation_table[installer_filepath] = installation
+        installation_key = self._get_key(installation["enterprise_id"], installation["team_id"], installation["user_id"])
+        self.installation_table[installation_key] = installation
 
     def find_installation(
         self,
@@ -32,14 +26,11 @@ class MockInstallationStore(InstallationStore):
         team_id: Optional[str],
         user_id: str,
     ) -> Optional[JiraInstallation]:
-        none = "none"
-        e_id = enterprise_id or none
-        t_id = team_id or none
-        installation_filepath = f"{e_id}-{t_id}/installer-{user_id}-latest"
+        installation_key = self._get_key(enterprise_id, team_id, user_id)
 
-        installation = self.installation_table.get(installation_filepath, None)
+        installation = self.installation_table.get(installation_key, None)
         if installation is None:
-            message = f"Installation data missing for enterprise: {e_id}, team: {t_id}: not found"
+            message = f"Installation data missing for enterprise: {enterprise_id}, team: {team_id}: not found"
             self.logger.debug(message)
         return installation
 
@@ -50,15 +41,18 @@ class MockInstallationStore(InstallationStore):
         team_id: Optional[str],
         user_id: str,
     ) -> None:
-        none = "none"
-        e_id = enterprise_id or none
-        t_id = team_id or none
-        installation_filepath = f"{e_id}-{t_id}/installer-{user_id}-latest"
-        if installation_filepath in self.installation_table:
-            del self.installation_table[installation_filepath]
+        installation_key = self._get_key(enterprise_id, team_id, user_id)
+        if installation_key in self.installation_table:
+            del self.installation_table[installation_key]
         else:
-            message = f"Failed to delete installation data for enterprise: {e_id}, team: {t_id}: not found"
+            message = f"Failed to delete installation data for enterprise: {enterprise_id}, team: {team_id}: not found"
             self.logger.warning(message)
 
     def clear(self):
         self.installation_table.clear()
+
+    def _get_key(self, enterprise_id: Optional[str], team_id: Optional[str], user_id: str):
+        none = "none"
+        e_id = enterprise_id or none
+        t_id = team_id or none
+        return f"{e_id}-{t_id}/installer-{user_id}-latest"
