@@ -81,9 +81,8 @@ class JiraClient:
         self,
         *,
         key: str,
-        **kwargs,
     ) -> str:
-        return f"{urljoin(self.base_url, f'/browse/{key}')}?{urlencode(kwargs)}"
+        return f"{urljoin(self.base_url, f'/browse/{key}')}"
 
     def oauth2_token(
         self,
