@@ -1,4 +1,4 @@
-name: Linting validation using flake8
+name: Testing with pytest
 
 on:
   push:
