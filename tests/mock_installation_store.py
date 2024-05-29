@@ -1,5 +1,5 @@
-from logging import Logger
 import logging
+from logging import Logger
 from typing import Dict, Optional
 
 from oauth.installation_store.installation_store import InstallationStore

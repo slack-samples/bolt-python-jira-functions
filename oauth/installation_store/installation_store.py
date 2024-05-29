@@ -4,7 +4,6 @@ from .models import JiraInstallation
 
 
 class InstallationStore:
-
     def save(self, installation: JiraInstallation):
         """Saves an installation data"""
         raise NotImplementedError()

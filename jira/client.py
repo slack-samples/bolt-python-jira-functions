@@ -8,7 +8,6 @@ from requests import Response
 
 
 class JiraClient:
-
     def __init__(
         self,
         token: Optional[str] = None,
