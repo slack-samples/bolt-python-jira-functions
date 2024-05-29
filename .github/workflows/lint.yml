@@ -1,4 +1,4 @@
-name: Linting validation using flake8
+name: Linting validation using ruff
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     strategy:
@@ -23,6 +23,6 @@ jobs:
         run: |
           pip install -U pip
           pip install -r requirements.txt
-      - name: Lint with flake8
+      - name: Lint with ruff
         run: |
-          flake8 *.py
+          ruff check

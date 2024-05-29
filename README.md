@@ -59,11 +59,12 @@ To stop running locally, press `<CTRL> + C` to end the process.
 #### Linting
 
 ```zsh
-# Run flake8 from root directory for linting
-flake8 *.py
+# Run ruff from root directory for linting
+ruff check
 
-# Run black from root directory for code formatting
-black .
+# Run ruff from root directory for code formatting
+ruff format
+ruff check --fix
 ```
 
 ## Testing
