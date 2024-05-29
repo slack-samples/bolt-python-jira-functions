@@ -1,6 +1,6 @@
 from typing import TypedDict
 
-context = "Welcome to jira"
+from listeners.internals import CONNECT_ACCOUNT_ACTION, DISCONNECT_ACCOUNT_ACTION
 
 
 class AppHome(TypedDict):
@@ -17,7 +17,7 @@ class AppHomeBuilder:
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": context,
+                        "text": "Welcome to the Jira Server App",
                     },
                 },
                 {"type": "divider"},
@@ -36,7 +36,7 @@ class AppHomeBuilder:
                             "text": "Connect an Account",
                         },
                         "url": authorization_url,
-                        "action_id": "connect_account",
+                        "action_id": CONNECT_ACCOUNT_ACTION,
                     }
                 ],
             }
@@ -53,7 +53,7 @@ class AppHomeBuilder:
                             "type": "plain_text",
                             "text": "Disconnect Account",
                         },
-                        "action_id": "disconnect_account",
+                        "action_id": DISCONNECT_ACCOUNT_ACTION,
                     }
                 ],
             }
