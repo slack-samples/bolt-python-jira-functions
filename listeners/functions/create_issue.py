@@ -5,7 +5,7 @@ from slack_bolt import Ack, BoltContext, Complete, Fail
 from slack_sdk import WebClient
 
 from jira.client import JiraClient
-from oauth.installation_store.file import FileInstallationStore
+from jira.oauth.installation_store.file import JiraFileInstallationStore
 
 
 # https://developer.atlassian.com/server/jira/platform/jira-rest-api-examples/
@@ -16,7 +16,7 @@ def create_issue_callback(
     ack()
     user_id = inputs["user_context"]["id"]
 
-    installation = FileInstallationStore().find_installation(
+    installation = JiraFileInstallationStore().find_installation(
         user_id=user_id, team_id=context.team_id, enterprise_id=context.enterprise_id
     )
     if installation is None:

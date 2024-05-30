@@ -3,7 +3,7 @@ from typing import Optional
 from .models import JiraInstallation
 
 
-class InstallationStore:
+class JiraInstallationStore:
     def save(self, installation: JiraInstallation):
         """Saves an installation data"""
         raise NotImplementedError()

@@ -1,7 +1,7 @@
 from typing import Optional, TypedDict
 
 
-class UserIdentity(TypedDict):
+class JiraUserIdentity(TypedDict):
     """Class for keeping track of individual slack users"""
 
     user_id: str

@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, patch
 import requests
 
 from listeners.functions.create_issue import create_issue_callback
-from tests.mock_installation_store import MockInstallationStore
+from tests.mock_jira_installation_store import MockJiraInstallationStore
 from tests.utils import remove_os_env_temporarily, restore_os_env
 
 
@@ -25,7 +25,7 @@ class TestCreateIssue:
     enterprise_id = "E1234"
 
     def build_mock_installation_store(self):
-        installation_store = MockInstallationStore()
+        installation_store = MockJiraInstallationStore()
         installation_store.save(
             {
                 "scope": "WRITE",
@@ -45,7 +45,7 @@ class TestCreateIssue:
         self.old_os_env = remove_os_env_temporarily()
         os.environ["JIRA_BASE_URL"] = "https://jira-dev/"
         self.mock_installation_store = patch(
-            "listeners.functions.create_issue.FileInstallationStore", self.build_mock_installation_store
+            "listeners.functions.create_issue.JiraFileInstallationStore", self.build_mock_installation_store
         )
         self.mock_installation_store.start()
 

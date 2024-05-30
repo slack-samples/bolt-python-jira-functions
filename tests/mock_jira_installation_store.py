@@ -2,11 +2,11 @@ import logging
 from logging import Logger
 from typing import Dict, Optional
 
-from oauth.installation_store.installation_store import InstallationStore
-from oauth.installation_store.models import JiraInstallation
+from jira.oauth.installation_store.installation_store import JiraInstallationStore
+from jira.oauth.installation_store.models import JiraInstallation
 
 
-class MockInstallationStore(InstallationStore):
+class MockJiraInstallationStore(JiraInstallationStore):
     def __init__(
         self,
         *,

@@ -6,11 +6,11 @@ from logging import Logger
 from pathlib import Path
 from typing import Optional, Union
 
-from oauth.installation_store.installation_store import InstallationStore
-from oauth.installation_store.models import JiraInstallation
+from jira.oauth.installation_store.installation_store import JiraInstallationStore
+from jira.oauth.installation_store.models import JiraInstallation
 
 
-class FileInstallationStore(InstallationStore):
+class JiraFileInstallationStore(JiraInstallationStore):
     def __init__(
         self,
         *,
