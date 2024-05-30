@@ -35,11 +35,11 @@ pip install -r requirements.txt
 
 Before you can run the app, you'll need to store some environment variables.
 
-1. Rename `.env.sample` to `.env`
+1. Rename `.example.env` to `.env`
 2. Follow these
    [Jira Instruction](https://confluence.atlassian.com/adminjiraserver0909/configure-an-incoming-link-1251415519.html)
-   to get the `Client ID` (`JIRA_CLIENT_ID`) and `Client secret`
-   (`JIRA_CLIENT_SECRET`) values.
+   to create an external application and get the `Client ID` (`JIRA_CLIENT_ID`)
+   and `Client secret` (`JIRA_CLIENT_SECRET`) values.
 3. Populate the other environment variable value with proper values.
 
 ### Running Your Project Locally
@@ -100,17 +100,6 @@ primarily using it as a way to route inbound requests.
 ### `/listeners`
 
 Every incoming request is routed to a "listener". Inside this directory, we
-group each listener based on the Slack Platform feature used, so
-`/listeners/shortcuts` handles incoming
-[Shortcuts](https://api.slack.com/interactivity/shortcuts) requests,
-`/listeners/views` handles
-[View submissions](https://api.slack.com/reference/interaction-payloads/views#view_submission)
-and so on.
-
-### `/jira`
-
-Every request that needs to authenticate or interact with Jira can use the modules inside this directory.
-We've grouped these resources by what actions they do
 group each listener based on the Slack Platform feature used, so
 `/listeners/shortcuts` handles incoming
 [Shortcuts](https://api.slack.com/interactivity/shortcuts) requests,
