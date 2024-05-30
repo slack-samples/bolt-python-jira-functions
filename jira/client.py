@@ -92,7 +92,7 @@ class JiraClient:
         client_secret: str,
         redirect_uri: str,
         code_verifier: str,
-        grant_type="authorization_code",
+        grant_type: str = "authorization_code",
         **kwargs,
     ) -> Response:
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
