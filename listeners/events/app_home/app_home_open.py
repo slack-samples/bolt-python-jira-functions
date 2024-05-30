@@ -6,7 +6,7 @@ from slack_sdk import WebClient
 from internals import JIRA_CLIENT_ID, JIRA_CODE_VERIFIER, JIRA_REDIRECT_URI
 from jira.client import JiraClient
 from jira.oauth.installation_store.file import JiraFileInstallationStore
-from jira.oauth.state_store.memory import JiraMemoryOAuthStateStore
+from jira.oauth.state_store.file import JiraFileOAuthStateStore
 from jira.oauth.state_store.models import JiraUserIdentity
 
 from .builder import AppHomeBuilder
@@ -23,7 +23,7 @@ def app_home_open_callback(client: WebClient, event: dict, logger: Logger, conte
         )
 
         if installation is None:
-            state = JiraMemoryOAuthStateStore.issue(
+            state = JiraFileOAuthStateStore().issue(
                 user_identity=JiraUserIdentity(
                     user_id=context.user_id, team_id=context.team_id, enterprise_id=context.enterprise_id
                 )

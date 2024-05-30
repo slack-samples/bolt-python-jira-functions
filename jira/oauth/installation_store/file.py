@@ -14,7 +14,7 @@ class JiraFileInstallationStore(JiraInstallationStore):
     def __init__(
         self,
         *,
-        base_dir: str = "./data/installations",
+        base_dir: str = "./data/jira-installations",
         logger: Logger = logging.getLogger(__name__),
     ):
         self.base_dir = base_dir

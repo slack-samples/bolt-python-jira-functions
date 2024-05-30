@@ -2,7 +2,7 @@ import logging
 import os
 from datetime import datetime
 
-from flask import Flask, redirect, request
+from flask import Flask, make_response, redirect, request
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
@@ -16,7 +16,7 @@ from internals import (
 )
 from jira.client import JiraClient
 from jira.oauth.installation_store.file import JiraFileInstallationStore
-from jira.oauth.state_store.memory import JiraMemoryOAuthStateStore
+from jira.oauth.state_store.file import JiraFileOAuthStateStore
 from listeners import register_listeners
 
 logging.basicConfig(level=logging.INFO)
@@ -44,7 +44,10 @@ def oauth_redirect():
     jira_resp.raise_for_status()
     jira_resp_json = jira_resp.json()
 
-    user_identity = JiraMemoryOAuthStateStore.consume(state)
+    user_identity = JiraFileOAuthStateStore().consume(state)
+
+    if user_identity is None:
+        return make_response("State Not Found", 404)
 
     JiraFileInstallationStore().save(
         {
