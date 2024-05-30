@@ -1,9 +1,7 @@
 import os
-import secrets
 from urllib.parse import urljoin
 
-OAUTH_REDIRECT_PATH = "/oauth/redirect"
-JIRA_CODE_VERIFIER = secrets.token_urlsafe(96)[:128]
+from utils.constants import OAUTH_REDIRECT_PATH
 
 JIRA_CLIENT_ID = os.getenv("JIRA_CLIENT_ID")
 JIRA_CLIENT_SECRET = os.getenv("JIRA_CLIENT_SECRET")
