@@ -54,7 +54,7 @@ class TestCreateIssue:
         mock_fail = MagicMock()
         mock_complete = MagicMock()
         mock_context = MagicMock(team_id=self.team_id, enterprise_id=self.enterprise_id)
-        mock_client = MagicMock()
+        mock_client = Mock(spec=WebClient)
         mock_inputs = {
             "user_context": {"id": self.user_id},
             "project": "PROJ",
