@@ -18,7 +18,7 @@ Step-by-step instructions can be found in our
 
 ```zsh
 # Clone this project onto your machine
-slack create my-app -t https://github.com/slack-samples/bolt-python-jira-functions.git
+slack create my-app -t slack-samples/bolt-python-jira-functions
 
 # Change into the project directory
 cd my-app
