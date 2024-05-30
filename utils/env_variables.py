@@ -1,9 +1,0 @@
-import os
-from urllib.parse import urljoin
-
-from utils.constants import OAUTH_REDIRECT_PATH
-
-JIRA_CLIENT_ID = os.getenv("JIRA_CLIENT_ID")
-JIRA_CLIENT_SECRET = os.getenv("JIRA_CLIENT_SECRET")
-JIRA_REDIRECT_URI = urljoin(os.getenv("APP_BASE_URL"), OAUTH_REDIRECT_PATH)
-APP_HOME_PAGE_URL = os.getenv("APP_HOME_PAGE_URL")

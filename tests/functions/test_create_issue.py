@@ -1,14 +1,13 @@
 import json
 import logging
-import os
 from datetime import datetime
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 import requests
+from slack_sdk import WebClient
 
 from listeners.functions.create_issue import create_issue_callback
-from tests.mock_jira_installation_store import MockJiraInstallationStore
-from tests.utils import remove_os_env_temporarily, restore_os_env
+from tests.utils import build_mock_context, remove_os_env_temporarily, restore_os_env
 
 
 def mock_response(status=200, data: dict = None):
@@ -24,9 +23,10 @@ class TestCreateIssue:
     team_id = "T1234"
     enterprise_id = "E1234"
 
-    def build_mock_installation_store(self):
-        installation_store = MockJiraInstallationStore()
-        installation_store.save(
+    def setup_method(self):
+        self.old_os_env = remove_os_env_temporarily()
+        self.mock_context = build_mock_context()
+        self.mock_context.jira_installation_store.save(
             {
                 "scope": "WRITE",
                 "access_token": "jira_access_token",
@@ -39,18 +39,14 @@ class TestCreateIssue:
                 "installed_at": datetime.now().timestamp(),
             }
         )
-        return installation_store
-
-    def setup_method(self):
-        self.old_os_env = remove_os_env_temporarily()
-        os.environ["JIRA_BASE_URL"] = "https://jira-dev/"
-        self.mock_installation_store = patch(
-            "listeners.functions.create_issue.JiraFileInstallationStore", self.build_mock_installation_store
-        )
-        self.mock_installation_store.start()
+        self.mock_create_issue_context = patch("listeners.functions.create_issue.CONTEXT", self.mock_context)
+        self.mock_jira_client_context = patch("jira.client.CONTEXT", self.mock_context)
+        self.mock_jira_client_context.start()
+        self.mock_create_issue_context.start()
 
     def teardown_method(self):
-        self.mock_installation_store.stop()
+        self.mock_create_issue_context.stop()
+        self.mock_jira_client_context.stop()
         restore_os_env(self.old_os_env)
 
     def test_create_issue(self):
@@ -97,7 +93,7 @@ class TestCreateIssue:
         mock_fail = MagicMock()
         mock_complete = MagicMock()
         mock_context = MagicMock(team_id=self.team_id, enterprise_id=self.enterprise_id)
-        mock_client = MagicMock(chat_postMessage=lambda channel, text: True)
+        mock_client = Mock(spec=WebClient)
         mock_inputs = {
             "user_context": {"id": "wrong_id"},
             "project": "PROJ",

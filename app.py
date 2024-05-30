@@ -7,11 +7,8 @@ from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 from jira.client import JiraClient
-from jira.oauth.installation_store.file import JiraFileInstallationStore
-from jira.oauth.state_store.file import JiraFileOAuthStateStore
 from listeners import register_listeners
-from utils.constants import JIRA_CODE_VERIFIER, OAUTH_REDIRECT_PATH
-from utils.env_variables import APP_HOME_PAGE_URL, JIRA_CLIENT_ID, JIRA_CLIENT_SECRET, JIRA_REDIRECT_URI
+from utils.constants import CONTEXT
 
 logging.basicConfig(level=logging.INFO)
 
@@ -22,7 +19,7 @@ flask_app = Flask(__name__)
 register_listeners(app)
 
 
-@flask_app.route(OAUTH_REDIRECT_PATH, methods=["GET"])
+@flask_app.route(CONTEXT.jira_oauth_redirect_path, methods=["GET"])
 def oauth_redirect():
     code = request.args["code"]
     state = request.args["state"]
@@ -30,20 +27,20 @@ def oauth_redirect():
     jira_client = JiraClient()
     jira_resp = jira_client.oauth2_token(
         code=code,
-        client_id=JIRA_CLIENT_ID,
-        client_secret=JIRA_CLIENT_SECRET,
-        code_verifier=JIRA_CODE_VERIFIER,
-        redirect_uri=JIRA_REDIRECT_URI,
+        client_id=CONTEXT.jira_client_id,
+        client_secret=CONTEXT.jira_client_secret,
+        code_verifier=CONTEXT.jira_code_verifier,
+        redirect_uri=CONTEXT.jira_redirect_uri,
     )
     jira_resp.raise_for_status()
     jira_resp_json = jira_resp.json()
 
-    user_identity = JiraFileOAuthStateStore().consume(state)
+    user_identity = CONTEXT.jira_state_store.consume(state)
 
     if user_identity is None:
         return make_response("State Not Found", 404)
 
-    JiraFileInstallationStore().save(
+    CONTEXT.jira_installation_store.save(
         {
             "access_token": jira_resp_json["access_token"],
             "enterprise_id": user_identity["enterprise_id"],
@@ -56,7 +53,7 @@ def oauth_redirect():
             "user_id": user_identity["user_id"],
         }
     )
-    return redirect(APP_HOME_PAGE_URL, code=302)
+    return redirect(CONTEXT.app_home_page_url, code=302)
 
 
 if __name__ == "__main__":

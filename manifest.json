@@ -20,7 +20,7 @@
       "display_name": "BoltPy Jira Functions"
     },
     "app_home": {
-      "messages_tab_enabled": false,
+      "messages_tab_enabled": true,
       "home_tab_enabled": true
     }
   },

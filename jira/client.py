@@ -6,6 +6,8 @@ from urllib.parse import urlencode, urljoin
 import requests
 from requests import Response
 
+from utils.constants import CONTEXT
+
 
 class JiraClient:
     def __init__(
@@ -17,7 +19,7 @@ class JiraClient:
         proxies: Optional[Dict[str, str]] = None,
     ):
         self.token = token
-        self.base_url = base_url or os.environ.get("JIRA_BASE_URL")
+        self.base_url = base_url or CONTEXT.jira_base_url
         self.token_type = token_type
         self.headers = headers or {}
         self.headers[os.getenv("SECRET_HEADER_KEY")] = os.getenv("SECRET_HEADER_VALUE")
