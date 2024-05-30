@@ -27,8 +27,8 @@ class JiraFileInstallationStore(JiraInstallationStore):
         team_installation_dir = f"{self.base_dir}/{e_id}-{t_id}"
         self._mkdir(team_installation_dir)
 
-        u_id = installation["user_id"]
-        installer_filepath = f"{team_installation_dir}/installer-{u_id}-latest"
+        user_id = installation["user_id"]
+        installer_filepath = f"{team_installation_dir}/installer-{user_id}-latest"
         with open(installer_filepath, "w") as f:
             entity: str = json.dumps(installation)
             f.write(entity)

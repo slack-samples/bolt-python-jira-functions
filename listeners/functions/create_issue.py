@@ -58,10 +58,10 @@ def create_issue_callback(
         )
 
         response.raise_for_status()
-        jason_data = json.loads(response.text)
+        json_data = json.loads(response.text)
         complete(
             outputs={
-                "issue_url": jira_client.build_issue_url(key=jason_data["key"]),
+                "issue_url": jira_client.build_issue_url(key=json_data["key"]),
             }
         )
     except Exception as e:

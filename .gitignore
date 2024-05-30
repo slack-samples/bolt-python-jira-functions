@@ -40,3 +40,4 @@ logs/
 #tmp
 .slack
 data
+.ruff_cache

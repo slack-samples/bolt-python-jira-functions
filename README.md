@@ -107,6 +107,17 @@ group each listener based on the Slack Platform feature used, so
 [View submissions](https://api.slack.com/reference/interaction-payloads/views#view_submission)
 and so on.
 
+### `/jira`
+
+Every request that needs to authenticate or interact with Jira can use the modules inside this directory.
+We've grouped these resources by what actions they do
+group each listener based on the Slack Platform feature used, so
+`/listeners/shortcuts` handles incoming
+[Shortcuts](https://api.slack.com/interactivity/shortcuts) requests,
+`/listeners/views` handles
+[View submissions](https://api.slack.com/reference/interaction-payloads/views#view_submission)
+and so on.
+
 ### `slack.json`
 
 Used by the CLI to interact with the project's SDK dependencies. It contains
