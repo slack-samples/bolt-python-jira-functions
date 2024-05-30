@@ -38,6 +38,6 @@ logs/
 .pytype/
 
 #tmp
-.slack
+.slack/apps.dev.json
 data
 .ruff_cache
