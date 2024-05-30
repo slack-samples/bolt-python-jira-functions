@@ -25,7 +25,7 @@ class TestCreateIssue:
 
     def setup_method(self):
         self.old_os_env = remove_os_env_temporarily()
-        self.mock_context = build_mock_context()
+        self.mock_context = build_mock_context(team_id=self.team_id)
         self.mock_context.jira_installation_store.save(
             {
                 "scope": "WRITE",
@@ -34,8 +34,8 @@ class TestCreateIssue:
                 "expires_in": 1000,
                 "refresh_token": "jira_refresh_token",
                 "user_id": self.user_id,
-                "team_id": "T1234",
-                "enterprise_id": "E1234",
+                "team_id": self.team_id,
+                "enterprise_id": self.enterprise_id,
                 "installed_at": datetime.now().timestamp(),
             }
         )

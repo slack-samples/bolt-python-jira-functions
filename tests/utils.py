@@ -15,7 +15,7 @@ def restore_os_env(old_env: dict) -> None:
     os.environ.update(old_env)
 
 
-def build_mock_context() -> Context:
+def build_mock_context(team_id: str = "T123") -> Context:
     return Context(
         jira_base_url="https://jira-dev/",
         jira_client_id="abc123_id",
