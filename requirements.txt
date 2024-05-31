@@ -1,0 +1,6 @@
+slack-cli-hooks==0.0.1
+slack-bolt==1.19.0rc1
+requests==2.32.3
+Flask==3.0.3
+pytest==8.2.1
+ruff==0.4.6
