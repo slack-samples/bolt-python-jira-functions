@@ -36,3 +36,8 @@ tmp.txt
 logs/
 *.db
 .pytype/
+
+#tmp
+.slack/apps.dev.json
+data
+.ruff_cache

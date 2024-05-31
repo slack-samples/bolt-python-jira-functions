@@ -1,58 +1,61 @@
-import os
 import logging
-from slack_bolt import Ack, App, BoltContext, Say, Complete, Fail
+import os
+from datetime import datetime
+
+from flask import Flask, make_response, redirect, request
+from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
-from slack_sdk import WebClient
+
+from jira.client import JiraClient
+from listeners import register_listeners
+from utils.constants import CONTEXT
+
+logging.basicConfig(level=logging.INFO)
 
 app = App(token=os.environ.get("SLACK_BOT_TOKEN"))
-logging.basicConfig(level=logging.DEBUG)
+flask_app = Flask(__name__)
+
+# Register Listeners
+register_listeners(app)
 
 
-@app.function("sample_function")
-def handle_sample_function_event(inputs: dict, say: Say, fail: Fail, logger: logging.Logger):
-    user_id = inputs["user_id"]
+@flask_app.route(CONTEXT.jira_oauth_redirect_path, methods=["GET"])
+def oauth_redirect():
+    code = request.args["code"]
+    state = request.args["state"]
 
-    try:
-        say(
-            channel=user_id,  # sending a DM to this user
-            text="Click button to complete function!",
-            blocks=[
-                {
-                    "type": "section",
-                    "text": {"type": "mrkdwn", "text": "Click button to complete function!"},
-                    "accessory": {
-                        "type": "button",
-                        "text": {"type": "plain_text", "text": "Click me!"},
-                        "action_id": "sample_click",
-                    },
-                }
-            ],
-        )
-    except Exception as e:
-        logger.exception(e)
-        fail(f"Failed to handle a function request (error: {e})")
+    jira_client = JiraClient()
+    jira_resp = jira_client.oauth2_token(
+        code=code,
+        client_id=CONTEXT.jira_client_id,
+        client_secret=CONTEXT.jira_client_secret,
+        code_verifier=CONTEXT.jira_code_verifier,
+        redirect_uri=CONTEXT.jira_redirect_uri,
+    )
+    jira_resp.raise_for_status()
+    jira_resp_json = jira_resp.json()
 
+    user_identity = CONTEXT.jira_state_store.consume(state)
 
-@app.action("sample_click")
-def handle_sample_click(
-    ack: Ack, body: dict, context: BoltContext, client: WebClient, complete: Complete, fail: Fail, logger: logging.Logger
-):
-    ack()
+    if user_identity is None:
+        return make_response("State Not Found", 404)
 
-    try:
-        # Since the button no longer works, we should remove it
-        client.chat_update(
-            channel=context.channel_id,
-            ts=body["message"]["ts"],
-            text="Congrats! You clicked the button",
-        )
-
-        # Signal that the function completed successfully
-        complete({"user_id": context.actor_user_id})
-    except Exception as e:
-        logger.exception(e)
-        fail(f"Failed to handle a function request (error: {e})")
+    CONTEXT.jira_installation_store.save(
+        {
+            "access_token": jira_resp_json["access_token"],
+            "enterprise_id": user_identity["enterprise_id"],
+            "expires_in": jira_resp_json["expires_in"],
+            "installed_at": datetime.now().timestamp(),
+            "refresh_token": jira_resp_json["refresh_token"],
+            "scope": jira_resp_json["scope"],
+            "team_id": user_identity["team_id"],
+            "token_type": jira_resp_json["token_type"],
+            "user_id": user_identity["user_id"],
+        }
+    )
+    return redirect(CONTEXT.app_home_page_url, code=302)
 
 
 if __name__ == "__main__":
-    SocketModeHandler(app, os.environ.get("SLACK_APP_TOKEN")).start()
+    SocketModeHandler(app, os.environ.get("SLACK_APP_TOKEN")).connect()
+    flask_app.run(port=3000)
