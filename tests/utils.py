@@ -21,7 +21,7 @@ def build_mock_context(team_id: str = "T123") -> Context:
         jira_client_id="abc123_id",
         jira_client_secret="abc123_secret",
         app_base_url="http://127.0.0.1:3000",
-        app_home_page_url="slack://app?team=T123&id=A123&tab=home",
+        app_home_page_url=f"slack://app?team={team_id}&id=A123&tab=home",
         jira_installation_store=MockJiraInstallationStore(),
         jira_state_store=MockJiraOAuthStateStore(),
     )
