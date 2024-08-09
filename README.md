@@ -1,6 +1,7 @@
 # Bolt for Python Jira Functions
 
-This is a Bolt for Python app used to interact with Jira Server through custom functions in
+This is a Bolt for Python app used to interact with Jira Server through custom
+functions for use in
 [Workflow Builder](https://api.slack.com/start#workflow-builder).
 
 ## Setup
@@ -12,8 +13,8 @@ have permissions to install apps. If you don’t have one setup, go ahead and
 ### Developer Program
 
 Join the [Slack Developer Program](https://api.slack.com/developer-program) for
-exclusive access to beta features, tooling, and resources created to help
-developers build and grow.
+exclusive access to sandbox environments for building and testing your apps,
+tooling, and resources created to help developers build and grow.
 
 ## Installation
 
@@ -25,8 +26,8 @@ developers build and grow.
 3. Copy the contents of [manifest.json](./manifest.json) into the text box that
    says `*Paste your manifest code here*` (within the JSON tab) and click _Next_
 4. Review the configuration and click _Create_
-5. Click _Install to Workspace_ and _Allow_ on the screen that follows. You'll
-   then be redirected to the App Configuration dashboard.
+5. Click _Install_ button and _Allow_ on the screen that follows. You'll then be
+   redirected to the App Settings dashboard.
 
 ### Environment Variables
 
@@ -87,6 +88,16 @@ Run all tests with:
 ```zsh
 pytest tests/
 ```
+
+## Using Steps in Workflow Builder
+
+With your server running, your function is now ready for use in
+[Workflow Builder](https://api.slack.com/start#workflow-builder)! Add it as a
+custom step in a new or existing workflow, then run the workflow while your app
+is running.
+
+For more information on creating workflows and adding custom steps, read more
+[here](https://slack.com/help/articles/17542172840595-Create-a-new-workflow-in-Slack).
 
 ## Project Structure
 
