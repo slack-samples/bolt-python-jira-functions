@@ -34,7 +34,7 @@ tooling, and resources created to help developers build and grow.
 Before you can run the app, you'll need to store some environment variables.
 
 1. Rename `.example.env` to `.env`
-2. Open your apps configuration page from this list, click **OAuth &
+2. Open your apps setting page from this list, click **OAuth &
    Permissions** in the left hand menu, then copy the Bot User OAuth Token. You
    will store this in your environment as `SLACK_BOT_TOKEN`.
 3. Click ***Basic Information** from the left hand menu and follow the steps in
