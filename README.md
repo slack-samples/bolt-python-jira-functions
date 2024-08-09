@@ -46,11 +46,6 @@ Before you can run the app, you'll need to store some environment variables.
    and `Client secret` (`JIRA_CLIENT_SECRET`) values.
 5. Populate the other environment variable value with proper values.
 
-```zsh
-# export all variables in the .env file
-export $(grep -v '^#' .env | xargs)
-```
-
 ### Local Project
 
 ```zsh
