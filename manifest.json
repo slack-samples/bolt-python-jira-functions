@@ -11,9 +11,11 @@
     "socket_mode_enabled": true,
     "event_subscriptions": {
       "bot_events": [
-        "app_home_opened"
+        "app_home_opened",
+        "function_executed"
       ]
-    }
+    },
+    "function_runtime": "remote"
   },
   "features": {
     "bot_user": {
