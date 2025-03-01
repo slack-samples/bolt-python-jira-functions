@@ -2,4 +2,4 @@ slack-bolt==1.22.0
 requests==2.32.3
 Flask==3.1.0
 pytest==8.3.4
-ruff==0.9.4
+ruff==0.9.9
