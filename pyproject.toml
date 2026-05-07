@@ -1,16 +1,40 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bolt-python-jira-functions"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "slack-bolt==1.28.0",
+    "requests==2.33.1",
+    "Flask==3.1.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.0.3",
+    "ruff==0.15.12",
+]
+
+test = [
+    "pytest==9.0.3",
+]
+
+
+[tool.setuptools.packages.find]
+include = ["jira*", "listeners*", "utils*"]
+
 [tool.ruff]
 line-length = 125
 
 [tool.ruff.lint]
 ignore = []
 select = [
-	# pycodestyle error
 	"E",
-	# pycodestyle warning
 	"W",
-	# Pyflakes
 	"F",
-	# isort
 	"I",
 ]
 
