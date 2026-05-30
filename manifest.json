@@ -19,7 +19,8 @@
   },
   "features": {
     "bot_user": {
-      "display_name": "BoltPy Jira Functions"
+      "display_name": "BoltPy Jira Functions",
+      "always_online": true
     },
     "app_home": {
       "messages_tab_enabled": true,
