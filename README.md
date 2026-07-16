@@ -18,7 +18,36 @@ tooling, and resources created to help developers build and grow.
 
 ## Installation
 
-### Create a Slack App
+### Using Slack CLI
+
+Install the latest version of the Slack CLI for your operating system:
+
+- [Slack CLI for macOS & Linux](https://docs.slack.dev/tools/slack-cli/guides/installing-the-slack-cli-for-mac-and-linux/)
+- [Slack CLI for Windows](https://docs.slack.dev/tools/slack-cli/guides/installing-the-slack-cli-for-windows/)
+
+You'll also need to log in if this is your first time using the Slack CLI.
+
+```sh
+slack login
+```
+
+#### Initializing the project
+
+```sh
+slack create bolt-python-jira-functions --template slack-samples/bolt-python-jira-functions
+cd bolt-python-jira-functions
+```
+
+#### Running the app
+
+```sh
+slack run
+```
+
+<details>
+<summary><h3>Using Terminal</h3></summary>
+
+#### Create a Slack App
 
 1. Open [https://api.slack.com/apps/new](https://api.slack.com/apps/new) and
    choose "From an app manifest"
@@ -29,7 +58,7 @@ tooling, and resources created to help developers build and grow.
 5. Click _Install_ button and _Allow_ on the screen that follows. You'll then be
    redirected to the App Settings dashboard.
 
-### Environment Variables
+#### Environment Variables
 
 Before you can run the app, you'll need to store some environment variables.
 
@@ -47,7 +76,7 @@ Before you can run the app, you'll need to store some environment variables.
    and `Client secret` (`JIRA_CLIENT_SECRET`) values.
 5. Populate the other environment variable value with proper values.
 
-### Local Project
+#### Local Project
 
 ```zsh
 # Clone this project onto your machine
@@ -67,7 +96,7 @@ pip3 install -r requirements.txt
 python3 app.py
 ```
 
-#### Linting
+##### Linting
 
 ```zsh
 # Run ruff from root directory for linting
@@ -78,7 +107,7 @@ ruff format
 ruff check --fix
 ```
 
-#### Testing
+##### Testing
 
 For an example of how to test a function, see
 `tests/functions/test_create_issue.py`.
@@ -88,6 +117,8 @@ Run all tests with:
 ```zsh
 pytest tests/
 ```
+
+</details>
 
 ## Using Steps in Workflow Builder
 
